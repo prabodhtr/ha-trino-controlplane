@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "trino.controlplane.endpoint";
+
+package endpoint;
+
+// The cluster heartbeat listener service definition.
+service HeartBeatListener {
+  rpc isAlive (ClusterHBRequest) returns (HBResponse) {}
+}
+
+message ClusterHBRequest {
+  string clusterHost = 1;
+  int32 clusterPort = 2;
+}
+
+message HBResponse {
+  string message = 1;
+}

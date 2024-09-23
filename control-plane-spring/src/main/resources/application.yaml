@@ -1,0 +1,20 @@
+grpc:
+  server:
+    port: 12345
+
+server:
+  port: 9000
+
+envoy:
+  admin:
+    url: http://localhost:8001
+
+cluster:
+  registry:
+    cleanup-cron : "@daily"
+  selector:
+    refresh-cron: 0/20 * * * * *
+    filter-out:
+      - cache
+      - xds_cluster
+

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "trino.controlplane.endpoint";
+
+package endpoint;
+
+service ClusterSelector {
+  rpc getClusterForQuery (SelectClusterRequest) returns (SelectClusterResponse) {}
+
+  rpc saveCluster(SaveClusterRequest) returns (EmptyResponse) {}
+}
+
+message SelectClusterRequest {
+  string queryId = 1;
+
+}
+
+message SelectClusterResponse {
+  string cluster = 1;
+}
+
+message SaveClusterRequest {
+  string queryId = 1;
+  string cluster = 2;
+}
+
+message EmptyResponse {}
