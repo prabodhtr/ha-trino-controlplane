@@ -18,6 +18,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.example</groupId>
             <artifactId>trino-common</artifactId>
@@ -27,8 +28,8 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring.boot.version}</version>
         </dependency>
+
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-server-spring-boot-starter</artifactId>
@@ -38,7 +39,6 @@
         <dependency>
             <groupId>io.envoyproxy.controlplane</groupId>
             <artifactId>cache</artifactId>
-            <version>${envoy.controlplane.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -46,10 +46,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>io.envoyproxy.controlplane</groupId>
             <artifactId>server</artifactId>
-            <version>${envoy.controlplane.version}</version>
         </dependency>
 
         <dependency>
@@ -67,7 +67,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
         </dependency>
     </dependencies>
 
@@ -83,7 +82,7 @@
                             <goal>repackage</goal>
                         </goals>
                         <configuration>
-                            <classifier>spring-boot</classifier>
+                            <finalName>trino-control-plane</finalName>
                             <mainClass>
                                 trino.envoy.controlplane.spring.Main
                             </mainClass>

@@ -7,7 +7,7 @@ server:
 
 envoy:
   admin:
-    url: http://localhost:8001
+    url: ${ENVOY_ADMIN_URL}
 
 cluster:
   registry:
