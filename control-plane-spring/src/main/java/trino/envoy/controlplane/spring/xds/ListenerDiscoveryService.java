@@ -16,10 +16,14 @@ import io.envoyproxy.envoy.extensions.filters.http.lua.v3.LuaPerRoute;
 import io.envoyproxy.envoy.extensions.filters.http.router.v3.Router;
 import io.envoyproxy.envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager;
 import io.envoyproxy.envoy.extensions.filters.network.http_connection_manager.v3.HttpFilter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import trino.common.models.Observer;
 import trino.common.models.Subject;
 import trino.common.utils.Utils;
+import trino.envoy.controlplane.spring.config.EnvoyConfig;
 import trino.envoy.controlplane.spring.registry.ClusterRegistry;
 
 import javax.annotation.PostConstruct;
@@ -39,9 +43,10 @@ import static trino.envoy.controlplane.spring.constants.Constants.*;
 @Component
 public class ListenerDiscoveryService extends Subject<List<Listener>> implements Observer {
 
-    public ListenerDiscoveryService() {
+    @Autowired
+    public ListenerDiscoveryService(EnvoyConfig envoyConfig) {
         this.setState(new ArrayList<>());
-        addTrinoListener(8000);
+        addTrinoListener(envoyConfig.getListenerPort());
         update();
     }
 

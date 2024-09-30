@@ -8,6 +8,8 @@ server:
 envoy:
   admin:
     url: ${ENVOY_ADMIN_URL}
+  listener:
+    port: 8000
 
 cluster:
   registry:
