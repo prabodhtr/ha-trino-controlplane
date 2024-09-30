@@ -2,7 +2,6 @@ package trino.envoy.controlplane.spring.xds;
 
 import com.google.protobuf.Any;
 import io.envoyproxy.envoy.config.accesslog.v3.AccessLog;
-import io.envoyproxy.envoy.config.cluster.v3.Cluster;
 import io.envoyproxy.envoy.config.core.v3.Address;
 import io.envoyproxy.envoy.config.core.v3.DataSource;
 import io.envoyproxy.envoy.config.core.v3.SocketAddress;
@@ -16,15 +15,12 @@ import io.envoyproxy.envoy.extensions.filters.http.lua.v3.LuaPerRoute;
 import io.envoyproxy.envoy.extensions.filters.http.router.v3.Router;
 import io.envoyproxy.envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager;
 import io.envoyproxy.envoy.extensions.filters.network.http_connection_manager.v3.HttpFilter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import trino.common.models.Observer;
 import trino.common.models.Subject;
 import trino.common.utils.Utils;
 import trino.envoy.controlplane.spring.config.EnvoyConfig;
-import trino.envoy.controlplane.spring.registry.ClusterRegistry;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
