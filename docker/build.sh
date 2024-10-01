@@ -3,17 +3,18 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 cd "${SCRIPT_DIR}" || exit 2
 
 # SOURCE_DIR is set to project root
-SOURCE_DIR="${SCRIPT_DIR}/../../"
+SOURCE_DIR="${SCRIPT_DIR}/../"
 
 VERSION=latest
 
 echo "Preparing the image build context directory"
 WORK_DIR="$(mktemp -d)"
+cp "$SOURCE_DIR/control-plane-spring/target/trino-control-plane.jar" "${WORK_DIR}/"
+cp "$SOURCE_DIR/control-plane-spring/src/main/resources/application.yaml" "${WORK_DIR}/"
 
-TAG="custom_envoyproxy:${VERSION}"
-cp "$SOURCE_DIR/docker/envoy/entrypoint.sh" "${WORK_DIR}/"
+TAG="trino-controlplane:${VERSION}"
 
-echo "Building the image for envoyproxy with tag ${TAG}"
+echo "Building the image for trino-control plane with tag ${TAG}"
 docker build \
     "${WORK_DIR}" \
     --pull \

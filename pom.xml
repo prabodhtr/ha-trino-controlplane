@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>trino-common</module>
+        <module>commons</module>
         <module>control-plane-spring</module>
     </modules>
 
