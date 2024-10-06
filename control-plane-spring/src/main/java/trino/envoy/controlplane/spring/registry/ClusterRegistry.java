@@ -7,7 +7,10 @@ import trino.common.models.ClusterInfo;
 import trino.common.models.Subject;
 import trino.envoy.controlplane.spring.service.ClusterHealthService;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -32,8 +35,13 @@ public class ClusterRegistry extends Subject<Map<String, ClusterInfo>> {
         notifyIfRegisteredClustersChanged();
     }
 
+    public void unRegister(String name) {
+        this.getState().remove(name);
+        notifyIfRegisteredClustersChanged();
+    }
+
     @Scheduled(cron = "${cluster.registry.cleanup-cron}")
-    public void refreshRegistryState(){
+    public void refreshRegistryState() {
         List<String> healthyClusters = clusterHealthService.getState();
         Set<String> inActiveClusters = this.getState().keySet()
                 .stream()

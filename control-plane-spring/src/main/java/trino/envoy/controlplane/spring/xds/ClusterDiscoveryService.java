@@ -1,7 +1,10 @@
 package trino.envoy.controlplane.spring.xds;
 
+import com.google.protobuf.Duration;
+import com.google.protobuf.UInt32Value;
 import io.envoyproxy.envoy.config.cluster.v3.Cluster;
 import io.envoyproxy.envoy.config.core.v3.Address;
+import io.envoyproxy.envoy.config.core.v3.HealthCheck;
 import io.envoyproxy.envoy.config.core.v3.SocketAddress;
 import io.envoyproxy.envoy.config.endpoint.v3.ClusterLoadAssignment;
 import io.envoyproxy.envoy.config.endpoint.v3.Endpoint;
@@ -44,6 +47,13 @@ public class ClusterDiscoveryService extends Subject<List<Cluster>> implements O
         this.getState().add(Cluster.newBuilder()
                 .setName(clusterName)
                 .setType(Cluster.DiscoveryType.STRICT_DNS)
+                .addHealthChecks(HealthCheck.newBuilder()
+                        .setTimeout(Duration.newBuilder().setSeconds(5))
+                        .setInterval(Duration.newBuilder().setSeconds(60))
+                        .setUnhealthyThreshold(UInt32Value.newBuilder().setValue(1))
+                        .setHealthyThreshold(UInt32Value.newBuilder().setValue(2))
+                        .setHttpHealthCheck(HealthCheck.HttpHealthCheck.newBuilder()
+                                .setPath("/v1/info")))
                 .setLoadAssignment(
                         ClusterLoadAssignment.newBuilder()
                                 .setClusterName(clusterName)
