@@ -1,0 +1,62 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# GitHub recommends pinning actions to a commit SHA.
+# To get a newer version, you will need to update the SHA.
+# You can also reference a tag or branch, but the action may change without warning.
+
+name: publish docker image
+
+on:
+  push:
+    branches: [ "master" ]
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+env:
+  # An envar that signals to tests we are executing in the CI environment
+  CONTINUOUS_INTEGRATION: true
+  # allow overriding Maven command
+  MAVEN_OPTS: "-Xmx512M -XX:+ExitOnOutOfMemoryError"
+  MAVEN_INSTALL_OPTS: "-Xmx3G -XX:+ExitOnOutOfMemoryError"
+  MAVEN_FAST_INSTALL: "-B -V -T 1C -DskipTests -Dmaven.source.skip=true -Dair.check.skip-all"
+
+jobs:
+  push_to_registry:
+    name: build and push the image to dockerhub
+    
+    runs-on: ubuntu-latest
+    
+    permissions:
+      packages: write
+      contents: read
+      id-token: write
+    
+    steps:
+      - name: check out the repo
+        uses: actions/checkout@v4
+
+      - name: setup java 22
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '22'
+
+      - name: login to dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: build and push docker image
+        run: |
+          export MAVEN_OPTS="${MAVEN_INSTALL_OPTS}"
+          mvn clean install ${MAVEN_FAST_INSTALL}
+          docker/build.sh
+          docker tag trino-controlplane:latest prabodhtr/trino:trino-controlplane-1.0
+          docker push prabodhtr/trino:trino-controlplane-1.0
+        
