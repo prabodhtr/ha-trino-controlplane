@@ -10,6 +10,7 @@ import io.envoyproxy.envoy.config.endpoint.v3.ClusterLoadAssignment;
 import io.envoyproxy.envoy.config.endpoint.v3.Endpoint;
 import io.envoyproxy.envoy.config.endpoint.v3.LbEndpoint;
 import io.envoyproxy.envoy.config.endpoint.v3.LocalityLbEndpoints;
+import lombok.Synchronized;
 import org.springframework.stereotype.Component;
 import trino.common.models.ClusterInfo;
 import trino.common.models.Observer;
@@ -17,7 +18,6 @@ import trino.common.models.Subject;
 import trino.envoy.controlplane.spring.registry.ClusterRegistry;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.concurrent.GuardedBy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +44,6 @@ public class ClusterDiscoveryService extends Subject<List<Cluster>> implements O
         clusterRegistry.addObserver(this);
     }
 
-    @GuardedBy("this")
     private void addCluster(String clusterName, ClusterInfo clusterInfo) {
         this.getState().add(Cluster.newBuilder()
                 .setName(clusterName)
@@ -71,7 +70,7 @@ public class ClusterDiscoveryService extends Subject<List<Cluster>> implements O
     }
 
     @Override
-    @GuardedBy("this")
+    @Synchronized
     public void update() {
         this.getState().clear();
         clusterRegistry.getState().forEach(this::addCluster);

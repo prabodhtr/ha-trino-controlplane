@@ -15,6 +15,7 @@ import io.envoyproxy.envoy.extensions.filters.http.lua.v3.LuaPerRoute;
 import io.envoyproxy.envoy.extensions.filters.http.router.v3.Router;
 import io.envoyproxy.envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager;
 import io.envoyproxy.envoy.extensions.filters.network.http_connection_manager.v3.HttpFilter;
+import lombok.Synchronized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import trino.common.models.Observer;
@@ -107,6 +108,7 @@ public class ListenerDiscoveryService extends Subject<List<Listener>> implements
 
 
     @Override
+    @Synchronized
     public void update() {
         notifyObservers();
     }

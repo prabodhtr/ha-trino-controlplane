@@ -3,13 +3,13 @@ grpc:
     port: 12345
 
 server:
-  port: 9000
+  port: 9090
 
 envoy:
   admin:
     url: ${ENVOY_ADMIN_URL}
   listener:
-    port: 8000
+    port: 8090
 
 cluster:
   registry:

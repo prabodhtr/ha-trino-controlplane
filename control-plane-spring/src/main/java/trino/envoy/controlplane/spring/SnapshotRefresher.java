@@ -10,7 +10,6 @@ import trino.envoy.controlplane.spring.xds.ClusterDiscoveryService;
 import trino.envoy.controlplane.spring.xds.ListenerDiscoveryService;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.concurrent.GuardedBy;
 import java.time.LocalDateTime;
 
 import static trino.envoy.controlplane.spring.constants.Constants.GROUP;
@@ -37,7 +36,6 @@ public class SnapshotRefresher implements Observer {
     }
 
     @Override
-    @GuardedBy("this")
     public void update() {
         updateSnapshot();
     }

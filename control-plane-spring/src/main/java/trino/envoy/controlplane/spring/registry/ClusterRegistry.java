@@ -1,5 +1,7 @@
 package trino.envoy.controlplane.spring.registry;
 
+import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.SerializationUtils;
@@ -7,7 +9,6 @@ import trino.common.models.ClusterInfo;
 import trino.common.models.Subject;
 import trino.envoy.controlplane.spring.service.ClusterHealthService;
 
-import javax.annotation.concurrent.GuardedBy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
  * This is an <code>Observable</code> class whose state holds the details of clusters who registered against envoy.
  * Whenever a <i>new</i> cluster is registered, all the observers are notified of the change
  */
+@Slf4j
 @Component
 public class ClusterRegistry extends Subject<Map<String, ClusterInfo>> {
 
@@ -36,13 +38,11 @@ public class ClusterRegistry extends Subject<Map<String, ClusterInfo>> {
         notifyIfRegisteredClustersChanged();
     }
 
-    @GuardedBy("this")
     public void unRegister(String name) {
         this.getState().remove(name);
         notifyIfRegisteredClustersChanged();
     }
 
-    @GuardedBy("this")
     @Scheduled(cron = "${cluster.registry.cleanup-cron}")
     public void refreshRegistryState() {
         List<String> healthyClusters = clusterHealthService.getState();
@@ -57,7 +57,11 @@ public class ClusterRegistry extends Subject<Map<String, ClusterInfo>> {
         notifyIfRegisteredClustersChanged();
     }
 
-    @GuardedBy("this")
+    /**
+     * The method should be synchronized to avoid parallel threads from modifying state and updating snapshot,
+     * which would throw duplicate entry exception
+     */
+    @Synchronized
     private void notifyIfRegisteredClustersChanged() {
         if (!this.getState().equals(previousState)) {
             previousState = SerializationUtils.clone((HashMap<String, ClusterInfo>) this.getState());
