@@ -51,7 +51,7 @@ public class ClusterDiscoveryService extends Subject<List<Cluster>> implements O
                 .setType(Cluster.DiscoveryType.STRICT_DNS)
                 .addHealthChecks(HealthCheck.newBuilder()
                         .setTimeout(Duration.newBuilder().setSeconds(5))
-                        .setInterval(Duration.newBuilder().setSeconds(60))
+                        .setInterval(Duration.newBuilder().setSeconds(30))
                         .setUnhealthyThreshold(UInt32Value.newBuilder().setValue(1))
                         .setHealthyThreshold(UInt32Value.newBuilder().setValue(2))
                         .setHttpHealthCheck(HealthCheck.HttpHealthCheck.newBuilder()
