@@ -7,6 +7,7 @@ import trino.common.models.ClusterInfo;
 import trino.common.models.Subject;
 import trino.envoy.controlplane.spring.service.ClusterHealthService;
 
+import javax.annotation.concurrent.GuardedBy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +36,13 @@ public class ClusterRegistry extends Subject<Map<String, ClusterInfo>> {
         notifyIfRegisteredClustersChanged();
     }
 
+    @GuardedBy("this")
     public void unRegister(String name) {
         this.getState().remove(name);
         notifyIfRegisteredClustersChanged();
     }
 
+    @GuardedBy("this")
     @Scheduled(cron = "${cluster.registry.cleanup-cron}")
     public void refreshRegistryState() {
         List<String> healthyClusters = clusterHealthService.getState();
@@ -54,6 +57,7 @@ public class ClusterRegistry extends Subject<Map<String, ClusterInfo>> {
         notifyIfRegisteredClustersChanged();
     }
 
+    @GuardedBy("this")
     private void notifyIfRegisteredClustersChanged() {
         if (!this.getState().equals(previousState)) {
             previousState = SerializationUtils.clone((HashMap<String, ClusterInfo>) this.getState());
